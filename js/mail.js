@@ -1,13 +1,12 @@
 const firebaseConfig = {
-    apiKey: "AIzaSyC40DnMWEHsrsxC7H1hSgx-1QnBDY_13ns",
-    authDomain: "contkigo-1deee.firebaseapp.com",
-    databaseURL: "https://contkigo-1deee-default-rtdb.firebaseio.com",
-    projectId: "contkigo-1deee",
-    storageBucket: "contkigo-1deee.appspot.com",
-    messagingSenderId: "415045402647",
-    appId: "1:415045402647:web:a1d9623730a17450531c52",
-    measurementId: "G-RDQKCNYDLB"
-  };
+  apiKey: "AIzaSyBS2tTVfLOpjrCfgCzEFerbMF7xqCH4nwM",
+  authDomain: "conkigo-24303.firebaseapp.com",
+  databaseURL: "https://conkigo-24303-default-rtdb.firebaseio.com",
+  projectId: "conkigo-24303",
+  storageBucket: "conkigo-24303.appspot.com",
+  messagingSenderId: "979146498793",
+  appId: "1:979146498793:web:f3af87ea14ab6bfd3c4678"
+};
 
   // initial firebase
   firebase.initializeApp(firebaseConfig);
