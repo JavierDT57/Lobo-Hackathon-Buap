@@ -1,6 +1,6 @@
 <?php
     
-    $conexion = mysqli_connect("localhost","root","","pruebaBD"); // Estableciendo conexion con la BD
+    $conexion = mysqli_connect("localhost","root","","incidentes_be"); // Estableciendo conexion con la BD
     
     if($conexion){
         echo 'Conectado exitosamente a la Base de datos';
