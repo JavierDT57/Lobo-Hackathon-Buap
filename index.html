@@ -1,39 +1,227 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Messages | Firebase</title>
-    <link rel="stylesheet" href="./assets/css/styles.css">
-</head>
-
-<body>
+<html>
+    <head>
+        <title>Reporte de Incidentes</title>
+        <style>
+            /* Estilos CSS */
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #ca5718; /* Darker Kigo Parkimovil orange */
+            }
+    
+            .container {
+                max-width: 500px;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: #1e2a4f; /* Darker Kigo Parkimovil blue */
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                animation: slide-in 0.5s ease-in-out forwards;
+            }
+    
+            @keyframes slide-in {
+                from {
+                    transform: translateY(20px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+    
+            .form-group {
+                margin-bottom: 20px;
+            }
+    
+            .form-group label {
+                display: block;
+                font-weight: bold;
+                margin-bottom: 5px;
+                color: #fff; /* White text for better contrast */
+            }
+    
+            .form-group select,
+            .form-group input,
+            .form-group textarea {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+    
+            .form-group textarea {
+                height: 100px;
+            }
+    
+            .form-group .btn {
+                background-color: #ca5718;
+                color: #fff;
+                padding: 10px 20px;
+                font-weight: bold;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+    
+            .form-group .btn1 {
+                background-color: #ca1818;
+                color: #fff;
+                float: right;
+                padding: 10px 20px;
+                font-weight: bold;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+    
+            .form-group .btn:hover {
+                background-color: #ff8c00;
+            }
+    
+            .form-group .btn1:hover {
+                background-color: #ff2600ad;
+            }
+    
+            /* Estilos para el icono */
+            .custom-file-input {
+                display: none;
+            }
+    
+            .custom-file-label {
+                background-image: url("https://pics.freeicons.io/uploads/icons/png/13638841151557740338-512.png");
+                background-size: cover;
+                width: 47px;
+                height: 76px;
+                cursor: pointer;
+                padding-left: 40px;
+            }
+        </style>
+    </head>
+    <body>
     <div class="container">
-        <form action="" id="contactForm">
-            <div class="alert">Your message sent</div>
-
-            <div class="inputBox">
-                <input type="text" id="name" placeholder="Your name...." />
+        <h2 style="color: #fff">Reporte de Incidentes</h2>
+        <form id="incident-form">
+            <div class="form-group">
+                <label for="categoria">Categoría del Incidente:</label>
+                <select id="categoria" name="categoria">
+                    <option value="">Seleccione una categoría</option>
+                    <option value="vehiculo_mal_estacionado">Vehículo mal estacionado</option>
+                    <option value="invasion_espacios_exclusivos">Invasión de espacios exclusivos</option>
+                    <option value="robo_vandalismo">Robo o vandalismo</option>
+                    <option value="accidente_trafico">Accidente de tráfico</option>
+                    <option value="amc">Area en malas condiciones</option>
+                    <option value="as">Actividad sospechosa</option>
+                    <option value="otros">Otros</option>
+                </select>
+                <input type="text" id="categoria_otro" name="categoria_otro" placeholder="Especificar otra categoría" style="display: none;">
             </div>
-
-            <div class="inputBox">
-                <input type="email" id="emailid" placeholder="Your Email....." />
+            <div class="form-group">
+                <label for="placa" id="placaT" style="display: none;">Placa vehicular:</label>
+                <input type="text" id="placa" name="placa" style="display: none;">
             </div>
-
-            <div class="inputBox">
-                <textarea id="msgContent" cols="30" rows="10" placeholder="Message"></textarea>
+            <div class="form-group">
+                <label for="ubicacion">Ubicación del Incidente:</label>
+                <input type="text" id="ubicacion" name="ubicacion">
             </div>
-
-            <div class="inputBox">
-                <button type="submit">Submit</button>
+            <div id="mapa"></div>
+            <div class="form-group">
+                <label for="imagenT" id="imagenT" style="display: none;">Imagen del Incidente:</label>
+                <label for="imagen" id="imaicon" style="display:none" class="custom-file-label"></label>
+                <input type="file" id="imagen" accept="image/*" capture="camera" class="custom-file-input">
+            </div>
+            <div class="form-group">
+                <label for="comentario">Comentario:</label>
+                <textarea id="comentario" name="comentario"></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit" id="submit" class="btn">Enviar Reporte</button>
+                <button type="cancel" class="btn1">Cancelar</button>
             </div>
         </form>
     </div>
+    
+    <script>
+        // JavaScript para activar/desactivar el campo de imagen y obtener la ubicación automáticamente
+        const placaInput = document.getElementById('placa');
+        const placaT = document.getElementById('placaT');
+        const ubicacionInput = document.getElementById('ubicacion');
+        const imagenInput = document.getElementById('imagen');
+        const imagicon = document.getElementById("imaicon");
+        const imagiconT = document.getElementById("imagenT");
+        const categoriaSelect = document.getElementById('categoria');
+        const categoriaOtroInput = document.getElementById('categoria_otro');
+    
+        placaInput.addEventListener('input', function () {
+            if (placaInput.value.trim() !== '') {
+                imagenInput.disabled = false;
+                imagicon.style.display = "block";
+                imagiconT.style.display="block";
+            } else {
+                imagenInput.disabled = true;
+                imagicon.style.display = "none";
+                imagiconT.style.display="none";
+            }
+        });
+    
+        categoriaSelect.addEventListener('change', function () {
+            if (categoriaSelect.value === 'vehiculo_mal_estacionado' ||
+                categoriaSelect.value === 'invasion_espacios_exclusivos' ||
+                categoriaSelect.value === 'robo_vandalismo') {
+                placaInput.style.display = 'block';
+                placaT.style.display="block"
+            } else {
+                placaInput.style.display = 'none';
+                placaT.style.display="none";
+                imagicon.style.display = "block";
+                imagiconT.style.display="block";
+            }
+    
+            if (categoriaSelect.value === 'otros') {
+                categoriaOtroInput.style.display = 'block';
+            } else {
+                categoriaOtroInput.style.display = 'none';
+            }
+        });
+    </script>
+    
+        <script type="module">
+               // Import the functions you need from the SDKs you need
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
+            import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-database.js";
+  
+  // Your web app's Firebase configuration
+                const firebaseConfig = {
+                    apiKey: "AIzaSyCaKwaRUqjdUr34yPxe__g4T2Htf9PhQbk",
+                    authDomain: "hackathon-kigo.firebaseapp.com",
+                    databaseURL: "https://hackathon-kigo-default-rtdb.firebaseio.com",
+                    projectId: "hackathon-kigo",
+                    storageBucket: "hackathon-kigo.appspot.com",
+                    messagingSenderId: "671673945648",
+                    appId: "1:671673945648:web:3fdf67540ac1ab169727f5"
+                };
+  
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/7.14.1-0/firebase.js"></script>
-    <script src="./js/mail.js"></script>
-</body>
+  // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
 
+   //get ref to database services
+             const db = getDatabase(app);
+
+             document.getElementById("submit").addEventListener('click', function(e){
+              e.preventDefault();
+              set(ref(db, 'Incidente/' + document.getElementById("categoria").value),
+              {
+   
+                categoria_otro: document.getElementById("categoria_otro").value,
+                placa: document.getElementById("placa").value,
+                ubicacion: document.getElementById("ubicacion").value,
+                imagen: document.getElementById("imagen").value,
+                comentario: document.getElementById("comentario").value
+                
+              });
+                alert("Reporte Enviado");
+             })
+        </script>
+    </body>
 </html>
